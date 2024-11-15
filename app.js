@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
 const voteRoutes = require("./routes/voteRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 const errorHandler = require("./utils/errorHandler");
 const helmet = require("helmet");
 const swaggerDocs = require("./swagger");
@@ -28,6 +29,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/candidates", candidateRoutes);
 app.use("/api/votes", voteRoutes);
+app.use("/api/comments", commentRoutes);
 
 // Swagger Docs
 swaggerDocs(app);
