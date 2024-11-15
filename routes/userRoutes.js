@@ -7,6 +7,17 @@ const {
 const { protect, admin } = require("../utils/authMiddleware");
 const router = express.Router();
 
+
+router
+  .route("/profile")
+  .get(protect, getUserProfile)
+  .put(protect, updateUserProfile);
+
+router.route("/:id").get(protect, admin, getUserById);
+
+module.exports = router;
+
+
 /**
  * @swagger
  * components:
@@ -134,12 +145,3 @@ const router = express.Router();
  *       404:
  *         description: User not found
  */
-
-router
-  .route("/profile")
-  .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
-
-router.route("/:id").get(protect, admin, getUserById);
-
-module.exports = router;

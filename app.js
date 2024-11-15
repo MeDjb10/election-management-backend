@@ -5,6 +5,7 @@ const app = express();
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const candidateRoutes = require("./routes/candidateRoutes");
+const voteRoutes = require("./routes/voteRoutes");
 const errorHandler = require("./utils/errorHandler");
 const helmet = require("helmet");
 const swaggerDocs = require("./swagger");
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/candidates", candidateRoutes);
+app.use("/api/votes", voteRoutes);
 
 // Swagger Docs
 swaggerDocs(app);
