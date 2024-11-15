@@ -8,6 +8,9 @@ const UserSchema = new mongoose.Schema(
     password: { type: String, required: true },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Candidate" }],
+    age: { type: Number, required: false },
+    bio: { type: String, required: false },
+    profilePicture: { type: String, required: false },
   },
   { timestamps: true }
 );
