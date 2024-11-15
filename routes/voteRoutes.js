@@ -3,10 +3,13 @@ const { castVote, getVotes } = require("../controllers/voteController");
 const { protect } = require("../utils/authMiddleware");
 const router = express.Router();
 
-router.route("/").post(protect, castVote).get(protect, getVotes);
-
-module.exports = router;
-
+module.exports = (io) => {
+  router
+    .route("/")
+    .post(protect, (req, res) => castVote(req, res, io))
+    .get(protect, getVotes);
+  return router;
+};
 
 /**
  * @swagger
