@@ -2,7 +2,7 @@ const express = require("express");
 const { getElectionResults } = require("../controllers/resultsController");
 const router = express.Router();
 
-router.route("/").get(getElectionResults);
+router.route("/:electionId").get(getElectionResults);
 
 module.exports = router;
 

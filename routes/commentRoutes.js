@@ -1,10 +1,15 @@
 const express = require("express");
-const { addComment, getComments } = require("../controllers/commentController");
+const {
+  addComment,
+  getComments,
+  getCommentById,
+} = require("../controllers/commentController");
 const { protect } = require("../utils/authMiddleware");
 const router = express.Router();
 
 router.route("/").post(protect, addComment);
 router.route("/:candidateId").get(getComments);
+router.route("/comment/:id").get(getCommentById);
 
 module.exports = router;
 
@@ -19,19 +24,28 @@ module.exports = router;
  *         - candidate
  *         - content
  *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the comment
  *         user:
  *           type: string
- *           description: The ID of the user who added the comment
+ *           description: The ID of the user who made the comment
  *         candidate:
  *           type: string
  *           description: The ID of the candidate being commented on
  *         content:
  *           type: string
  *           description: The content of the comment
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the comment was created
  *       example:
+ *         id: d5fE_asz
  *         user: 60d0fe4f5311236168a109ca
  *         candidate: 60d0fe4f5311236168a109cb
  *         content: This is a comment.
+ *         createdAt: 2024-11-15T15:16:07.557Z
  */
 
 /**
@@ -45,7 +59,7 @@ module.exports = router;
  * @swagger
  * /api/comments:
  *   post:
- *     summary: Add a comment
+ *     summary: Create a new comment
  *     tags: [Comments]
  *     security:
  *       - bearerAuth: []
@@ -60,27 +74,22 @@ module.exports = router;
  *                 type: string
  *               content:
  *                 type: string
- *             example:
- *               candidateId: 60d0fe4f5311236168a109cb
- *               content: This is a comment.
  *     responses:
  *       201:
- *         description: Comment added successfully
+ *         description: The comment was successfully created
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 comment:
- *                   $ref: '#/components/schemas/Comment'
- *       404:
- *         description: Candidate not found
+ *               $ref: '#/components/schemas/Comment'
  *       500:
- *         description: Server error
+ *         description: Some server error
+ */
+
+/**
+ * @swagger
+ * /api/comments/{candidateId}:
  *   get:
- *     summary: Get comments for a candidate
+ *     summary: Get comments by candidate id
  *     tags: [Comments]
  *     parameters:
  *       - in: path
@@ -88,16 +97,44 @@ module.exports = router;
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the candidate
+ *         description: The candidate id
  *     responses:
  *       200:
- *         description: The list of comments
+ *         description: The list of comments for the candidate
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *       404:
+ *         description: The candidate was not found
  *       500:
- *         description: Server error
+ *         description: Some server error
+ */
+
+/**
+ * @swagger
+ * /api/comments/comment/{id}:
+ *   get:
+ *     summary: Get the comment by id
+ *     tags: [Comments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The comment id
+ *     responses:
+ *       200:
+ *         description: The comment description by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Comment'
+ *       404:
+ *         description: The comment was not found
+ *       500:
+ *         description: Some server error
  */

@@ -16,7 +16,7 @@ exports.addComment = async (req, res) => {
       content,
     });
     await comment.save();
-
+   
     res.status(201).json({ message: "Comment added successfully", comment });
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
@@ -29,6 +29,22 @@ exports.getComments = async (req, res) => {
       candidate: req.params.candidateId,
     }).populate("user", "name");
     res.json(comments);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
+exports.getCommentById = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id).populate(
+      "user",
+      "name"
+    );
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+    res.json(comment);
   } catch (err) {
     res.status(500).json({ message: "Server Error" });
   }

@@ -1,7 +1,20 @@
 const Vote = require("../models/Vote");
+const Election = require("../models/Election");
+const { io } = require("../app");
 
-const emitResultsUpdate = async (io) => {
+const emitResultsUpdate = async (electionId) => {
+  const election = await Election.findById(electionId).populate(
+    "candidates",
+    "name party"
+  );
+  if (!election) {
+    return;
+  }
+
   const results = await Vote.aggregate([
+    {
+      $match: { candidate: { $in: election.candidates.map((c) => c._id) } },
+    },
     {
       $group: {
         _id: "$candidate",
@@ -31,7 +44,8 @@ const emitResultsUpdate = async (io) => {
       $sort: { votes: -1 },
     },
   ]);
-  io.emit("resultsUpdate", results);
+
+  io.emit("resultsUpdate", { electionId, results });
 };
 
 module.exports = emitResultsUpdate;
