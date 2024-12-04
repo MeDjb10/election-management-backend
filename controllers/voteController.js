@@ -2,7 +2,7 @@ const Vote = require("../models/Vote");
 const Candidate = require("../models/Candidate");
 const emitResultsUpdate = require("../utils/emitResultsUpdate");
 
-const castVote = async (req, res, io) => {
+exports.castVote = async (req, res) => {
   const { candidateId } = req.body;
 
   try {
@@ -20,7 +20,7 @@ const castVote = async (req, res, io) => {
     await vote.save();
 
     // Emit results update
-    emitResultsUpdate(io);
+    emitResultsUpdate(candidate.election);
 
     res.status(201).json({ message: "Vote cast successfully" });
   } catch (err) {
@@ -28,7 +28,7 @@ const castVote = async (req, res, io) => {
   }
 };
 
-const getVotes = async (req, res) => {
+exports.getVotes = async (req, res) => {
   try {
     const votes = await Vote.find().populate("candidate", "name party");
     res.json(votes);
@@ -36,5 +36,3 @@ const getVotes = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-
-module.exports = { castVote, getVotes };

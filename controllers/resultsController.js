@@ -1,9 +1,23 @@
 const Vote = require("../models/Vote");
 const Candidate = require("../models/Candidate");
+const Election = require("../models/Election");
 
 exports.getElectionResults = async (req, res) => {
+  const { electionId } = req.params;
+
   try {
+    const election = await Election.findById(electionId).populate(
+      "candidates",
+      "name party"
+    );
+    if (!election) {
+      return res.status(404).json({ message: "Election not found" });
+    }
+
     const results = await Vote.aggregate([
+      {
+        $match: { candidate: { $in: election.candidates.map((c) => c._id) } },
+      },
       {
         $group: {
           _id: "$candidate",

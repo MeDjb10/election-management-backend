@@ -13,6 +13,53 @@ const authorize = require("../utils/authorize");
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     Election:
+ *       type: object
+ *       required:
+ *         - title
+ *         - startDate
+ *         - endDate
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the election
+ *         title:
+ *           type: string
+ *           description: The title of the election
+ *         startDate:
+ *           type: string
+ *           format: date-time
+ *           description: The start date of the election
+ *         endDate:
+ *           type: string
+ *           format: date-time
+ *           description: The end date of the election
+ *         isActive:
+ *           type: boolean
+ *           description: Whether the election is active
+ *         candidates:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of candidate IDs participating in the election
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *           description: The date the election was created
+ *       example:
+ *         id: d5fE_asz
+ *         title: Presidential Election 2024
+ *         startDate: 2024-11-01T00:00:00.000Z
+ *         endDate: 2024-11-15T23:59:59.999Z
+ *         isActive: true
+ *         candidates: [60d0fe4f5311236168a109ca, 60d0fe4f5311236168a109cb]
+ *         createdAt: 2024-11-15T15:16:07.557Z
+ */
+
+/**
+ * @swagger
  * /api/elections:
  *   post:
  *     summary: Create a new election

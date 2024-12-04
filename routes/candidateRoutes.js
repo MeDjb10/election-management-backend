@@ -5,9 +5,14 @@ const {
   getCandidateById,
   createCandidate,
 } = require("../controllers/candidateController");
+const protect = require("../utils/auth");
+const authorize = require("../utils/authorize");
 const router = express.Router();
 
-router.route("/").get(getCandidates).post(createCandidate);
+router
+  .route("/")
+  .get(getCandidates)
+  .post(protect, authorize(["admin"]), createCandidate);
 router.route("/:id").get(getCandidateById);
 
 module.exports = router;
