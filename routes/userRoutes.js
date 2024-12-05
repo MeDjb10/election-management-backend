@@ -3,20 +3,24 @@ const {
   getUserProfile,
   updateUserProfile,
   getUserById,
+  deleteUser,
+  getUsers,
 } = require("../controllers/userController");
 const { protect, admin } = require("../utils/authMiddleware");
 const router = express.Router();
-
 
 router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
 
-router.route("/:id").get(protect, admin, getUserById);
+router
+  .route("/:id")
+  .get(protect, admin, getUserById)
+  .delete(protect, admin, deleteUser);
 
+router.route("/").get(protect, admin, getUsers);
 module.exports = router;
-
 
 /**
  * @swagger

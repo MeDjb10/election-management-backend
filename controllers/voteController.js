@@ -50,4 +50,17 @@ const getUserVotes = async (req, res) => {
   }
 };
 
-module.exports = { castVote, getVotes, getUserVotes };
+const getVotesByCandidate = async (req, res) => {
+  const { candidateId } = req.params;
+  try {
+    const votes = await Vote.find({ candidate: candidateId }).populate(
+      "user",
+      "name"
+    );
+    res.json(votes);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+module.exports = { castVote, getVotes, getUserVotes, getVotesByCandidate };

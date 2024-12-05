@@ -1,9 +1,10 @@
-
 const express = require("express");
 const {
   getCandidates,
   getCandidateById,
   createCandidate,
+  updateCandidate,
+  deleteCandidate,
 } = require("../controllers/candidateController");
 const protect = require("../utils/auth");
 const authorize = require("../utils/authorize");
@@ -13,10 +14,13 @@ router
   .route("/")
   .get(getCandidates)
   .post(protect, authorize(["admin"]), createCandidate);
-router.route("/:id").get(getCandidateById);
+router
+  .route("/:id")
+  .get(getCandidateById)
+  .put(protect, authorize(["admin"]), updateCandidate)
+  .delete(protect, authorize(["admin"]), deleteCandidate);
 
 module.exports = router;
-
 
 /**
  * @swagger
@@ -82,6 +86,8 @@ module.exports = router;
  *   post:
  *     summary: Create a new candidate
  *     tags: [Candidates]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -95,6 +101,8 @@ module.exports = router;
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Candidate'
+ *       400:
+ *         description: Validation error
  *       500:
  *         description: Some server error
  */
@@ -119,6 +127,56 @@ module.exports = router;
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Candidate'
+ *       404:
+ *         description: The candidate was not found
+ *       500:
+ *         description: Some server error
+ *   put:
+ *     summary: Update the candidate by id
+ *     tags: [Candidates]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The candidate id
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Candidate'
+ *     responses:
+ *       200:
+ *         description: The candidate was successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Candidate'
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: The candidate was not found
+ *       500:
+ *         description: Some server error
+ *   delete:
+ *     summary: Delete the candidate by id
+ *     tags: [Candidates]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The candidate id
+ *     responses:
+ *       200:
+ *         description: The candidate was successfully deleted
  *       404:
  *         description: The candidate was not found
  *       500:

@@ -42,3 +42,46 @@ exports.createCandidate = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+
+exports.updateCandidate = async (req, res) => {
+  const { error } = candidateSchema.validate(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+
+  try {
+    const candidate = await Candidate.findById(req.params.id);
+    if (!candidate) {
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    candidate.name = req.body.name || candidate.name;
+    candidate.party = req.body.party || candidate.party;
+    candidate.biography = req.body.biography || candidate.biography;
+    candidate.electoralProgram =
+      req.body.electoralProgram || candidate.electoralProgram;
+    candidate.profilePicture =
+      req.body.profilePicture || candidate.profilePicture;
+
+    await candidate.save();
+    res.json(candidate);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+exports.deleteCandidate = async (req, res) => {
+  try {
+    console.log("Received request to delete candidate with ID:", req.params.id);
+    const candidate = await Candidate.findById(req.params.id);
+    if (!candidate) {
+      console.log("Candidate not found");
+      return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    await Candidate.deleteOne({ _id: req.params.id });
+    console.log("Candidate removed successfully");
+    res.json({ message: "Candidate removed" });
+  } catch (err) {
+    console.error("Error deleting candidate:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+};

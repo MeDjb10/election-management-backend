@@ -1,10 +1,17 @@
 const express = require("express");
-const { castVote, getVotes, getUserVotes } = require("../controllers/voteController");
+const {
+  castVote,
+  getVotes,
+  getUserVotes,
+  getVotesByCandidate,
+} = require("../controllers/voteController");
 const { protect } = require("../utils/authMiddleware");
 const router = express.Router();
 
 router.route("/").post(protect, castVote).get(protect, getVotes);
 router.route("/user").get(protect, getUserVotes);
+router.route("/candidate/:candidateId").get(protect, getVotesByCandidate);
+
 module.exports = router;
 
 /**
@@ -78,6 +85,55 @@ module.exports = router;
  *     responses:
  *       200:
  *         description: The list of votes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Vote'
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/votes/user:
+ *   get:
+ *     summary: Get votes for the authenticated user
+ *     tags: [Votes]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: The list of votes for the authenticated user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Vote'
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/votes/candidate/{candidateId}:
+ *   get:
+ *     summary: Get votes by candidate ID
+ *     tags: [Votes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: candidateId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The candidate ID
+ *     responses:
+ *       200:
+ *         description: The list of votes for the candidate
  *         content:
  *           application/json:
  *             schema:
